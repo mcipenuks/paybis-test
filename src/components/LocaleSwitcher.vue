@@ -61,7 +61,12 @@ export default {
             this.$router.push({ name: 'home', params: { lang: locale } })
         },
         setDefaultCurrent() {
-            console.warn('localeSwitcher', this.$route);
+            setTimeout(() => {
+                const language = LANGUAGES.find(language => language.code === this.$i18n.locale);
+                if (language) {
+                    this.current = language;
+                }
+            }, 0);
         },
     }
 }

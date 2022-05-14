@@ -9,12 +9,14 @@ export default {
     components: {
         Header
     },
-    mounted() {
+    beforeMount() {
         this.setLocaleFromRoute();
     },
     methods: {
         setLocaleFromRoute() {
-            console.warn('App', this.$route);
+            setTimeout(() => {
+                this.$root.$i18n.locale = this.$route.params?.lang ?? 'en';
+            }, 0)
         },
     }
 }
