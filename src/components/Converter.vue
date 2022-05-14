@@ -2,14 +2,17 @@
     <div class="converter-wrapper">
         <ConverterInput
             :value="cryptoAmount"
-            :selectOptions="[]"
+            :currency-list="CRYPTO_CURRENCIES"
             @onInput="onCryptoInput"
+            @onCurrencySelect="onCurrencySelect($event)"
         />
         <div class="equal-sign">=</div>
         <ConverterInput
             :value="fiatPrice"
-            :selectOptions="[]"
+            :currency-list="FIAT_CURRENCIES"
+            :is-loading="isLoading"
             @onInput="onFiatInput"
+            @onCurrencySelect="onCurrencySelect($event)"
         />
     </div>
 </template>
@@ -17,10 +20,7 @@
 <script>
 import ConverterInput from '@/components/ConverterInput.vue';
 import { fetchTickerPair } from '@/api';
-
-const TICKER_RATE = 3000;
-const FIAT_INPUT_KEY = 'fiat';
-const CRYPTO_INPUT_KEY = 'crypto';
+import { TICKER_RATE, INPUT_TYPE_FIAT, INPUT_TYPE_CRYPTO, CRYPTO_CURRENCIES, FIAT_CURRENCIES } from '@/constants';
 
 export default {
     name: 'Converter',
@@ -29,28 +29,38 @@ export default {
     },
     data() {
         return {
+            CRYPTO_CURRENCIES,
+            FIAT_CURRENCIES,
             cryptoAmount: 1,
             fiatPrice: 0,
-            cryptoCode: 'BTC',
-            fiatCode: 'USD',
             tickerInfo: null,
-            activeInput: CRYPTO_INPUT_KEY,
+            activeInput: INPUT_TYPE_CRYPTO,
+            cryptoCurrency: CRYPTO_CURRENCIES[0],
+            fiatCurrency: FIAT_CURRENCIES[0],
+            fetchInterval: null,
+            isLoading: false,
         }
     },
     mounted() {
-        this.fetchTickerPair();
-        setInterval(() => this.fetchTickerPair(), TICKER_RATE);
+        this.startFetchInterval();
+    },
+    beforeDestroy() {
+        clearInterval(this.fetchInterval);
     },
     methods: {
         onFiatInput(value) {
             this.fiatPrice = value;
-            this.activeInput = FIAT_INPUT_KEY;
+            this.activeInput = INPUT_TYPE_FIAT;
             this.updateCryptoAmount();
         },
         onCryptoInput(value) {
             this.cryptoAmount = value;
-            this.activeInput = CRYPTO_INPUT_KEY;
+            this.activeInput = INPUT_TYPE_CRYPTO;
             this.updateFiatPrice();
+        },
+        onCurrencySelect(currency) {
+            this[currency.type+'Currency'] = currency;
+            this.startFetchInterval();
         },
         updateFiatPrice() {
             const price = this.cryptoAmount * (this.tickerInfo?.a[0] ?? 0);
@@ -61,14 +71,21 @@ export default {
             this.cryptoAmount = amount.toFixed(8);
         },
         updateInputsOnTicker() {
-            if (this.activeInput === FIAT_INPUT_KEY) {
+            if (this.activeInput === INPUT_TYPE_FIAT) {
                 this.updateCryptoAmount();
             } else {
                 this.updateFiatPrice();
             }
         },
+        startFetchInterval() {
+            clearInterval(this.fetchInterval);
+            this.isLoading = true;
+            this.fetchTickerPair();
+            this.fetchInterval = setInterval(() => this.fetchTickerPair(), TICKER_RATE);
+        },
         async fetchTickerPair() {
-            this.tickerInfo = await fetchTickerPair(this.cryptoCode, this.fiatCode);
+            this.tickerInfo = await fetchTickerPair(this.cryptoCurrency.code, this.fiatCurrency.code);
+            this.isLoading = false;
             this.updateInputsOnTicker();
         },
     },
@@ -79,6 +96,7 @@ export default {
 .converter-wrapper {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
 }
 .equal-sign {
     font-size: 48px;
