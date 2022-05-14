@@ -10,6 +10,18 @@
                 <span class="active-currency">{{ activeCurrency.code }}</span>
             </div>
             <input
+                v-show="showFormattedInput"
+                type="text"
+                class="converter-input"
+                :disabled="isLoading"
+                :value="formattedValue"
+                :placeholder="placeholder"
+                step="0.01"
+                @focus="onFormattedInputFocus"
+            >
+            <input
+                v-show="inputVisible"
+                ref="input"
                 type="number"
                 class="converter-input"
                 :disabled="isLoading"
@@ -17,6 +29,7 @@
                 :placeholder="placeholder"
                 step="0.01"
                 @input="onInput($event.target.valueAsNumber)"
+                @blur="onInputBlur"
             >
             <Loader v-show="isLoading"/>
         </div>
@@ -58,6 +71,16 @@ export default {
             default: '',
             required: false,
         },
+        hasFormattedInput: {
+            type: Boolean,
+            default: false,
+            required: false,
+        },
+        formattedValue: {
+            type: String,
+            required: false,
+            default: '',
+        },
         placeholder: {
             type: String,
             default: '0',
@@ -77,11 +100,14 @@ export default {
         return {
             search: '',
             activeCurrency: null,
-            isDropdownOpen: false
+            isDropdownOpen: false,
+            formattedInputVisible: false,
+            inputVisible: true,
         };
     },
     created() {
         this.setDefaultActiveCurrency();
+        this.setInputVisibility();
     },
     computed: {
         searchedCurrencyList() {
@@ -92,6 +118,9 @@ export default {
 
                 return codeMatched || nameMatched;
             });
+        },
+        showFormattedInput() {
+            return this.hasFormattedInput && this.formattedInputVisible;
         },
     },
     methods: {
@@ -118,6 +147,27 @@ export default {
         onDropdownOutsideClick(event) {
             if (!(event.target == this.$refs.dropdownToggle)) {
                 this.isDropdownOpen = false;
+            }
+        },
+        onFormattedInputFocus() {
+            this.formattedInputVisible = false;
+            this.inputVisible = true;
+            this.$nextTick(() => {
+                this.$refs.input.select();
+            })
+        },
+        onInputBlur() {
+            if (!this.hasFormattedInput) {
+                return;
+            }
+
+            this.formattedInputVisible = true;
+            this.inputVisible = false;
+        },
+        setInputVisibility() {
+            if (this.hasFormattedInput) {
+                this.formattedInputVisible = true;
+                this.inputVisible = false;
             }
         }
     }

@@ -11,8 +11,10 @@
             <div class="equal-sign">=</div>
             <ConverterInput
                 :value="fiatPrice"
+                :formatted-value="formattedFiatPrice"
                 :currency-list="FIAT_CURRENCIES"
                 :is-loading="isLoading"
+                has-formatted-input
                 @onInput="onFiatInput"
                 @onCurrencySelect="onCurrencySelect($event)"
             />
@@ -60,6 +62,9 @@ export default {
                 fiat: this.fiatCurrency.code,
             })
         },
+        formattedFiatPrice() {
+            return currencyFormatter(this.fiatPrice);
+        },
     },
     methods: {
         onFiatInput(value) {
@@ -78,7 +83,7 @@ export default {
         },
         updateFiatPrice() {
             const price = this.cryptoAmount * (this.tickerInfo?.a[0] ?? 0);
-            this.fiatPrice = price.toFixed(2);
+            this.fiatPrice = price;
         },
         updateCryptoAmount() {
             const amount = this.fiatPrice / (this.tickerInfo?.a[0] ?? 0);
