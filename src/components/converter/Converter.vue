@@ -1,24 +1,30 @@
 <template>
-    <div class="converter-wrapper">
-        <ConverterInput
-            :value="cryptoAmount"
-            :currency-list="CRYPTO_CURRENCIES"
-            @onInput="onCryptoInput"
-            @onCurrencySelect="onCurrencySelect($event)"
-        />
-        <div class="equal-sign">=</div>
-        <ConverterInput
-            :value="fiatPrice"
-            :currency-list="FIAT_CURRENCIES"
-            :is-loading="isLoading"
-            @onInput="onFiatInput"
-            @onCurrencySelect="onCurrencySelect($event)"
-        />
+    <div>
+        <div class="converter-title">{{ cryptoCurrency.code }} to {{ fiatCurrency.code }}</div>
+        <div class="converter-wrapper">
+            <ConverterInput
+                :value="cryptoAmount"
+                :currency-list="CRYPTO_CURRENCIES"
+                @onInput="onCryptoInput"
+                @onCurrencySelect="onCurrencySelect($event)"
+            />
+            <div class="equal-sign">=</div>
+            <ConverterInput
+                :value="fiatPrice"
+                :currency-list="FIAT_CURRENCIES"
+                :is-loading="isLoading"
+                @onInput="onFiatInput"
+                @onCurrencySelect="onCurrencySelect($event)"
+            />
+        </div>
+        <!-- <div class="converter-disclaimer">*{{ t('converter.priceDisclaimer') }}</div> -->
     </div>
 </template>
 
 <script>
-import ConverterInput from '@/components/ConverterInput.vue';
+import ConverterInput from '@/components/converter/ConverterInput.vue';
+// TODO: format input currency
+import { currencyFormatter } from '@/helpers';
 import { fetchTickerPair } from '@/api';
 import { TICKER_RATE, INPUT_TYPE_FIAT, INPUT_TYPE_CRYPTO, CRYPTO_CURRENCIES, FIAT_CURRENCIES } from '@/constants';
 
@@ -64,7 +70,7 @@ export default {
         },
         updateFiatPrice() {
             const price = this.cryptoAmount * (this.tickerInfo?.a[0] ?? 0);
-            this.fiatPrice = price.toFixed(2);
+            this.fiatPrice = price;
         },
         updateCryptoAmount() {
             const amount = this.fiatPrice / (this.tickerInfo?.a[0] ?? 0);
@@ -93,6 +99,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.converter-title {
+    font-size: 60px;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 100px;
+}
 .converter-wrapper {
     display: flex;
     align-items: center;

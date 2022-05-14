@@ -3,7 +3,7 @@
         <div class="input-group">
             <div
                 ref="dropdownToggle"
-                class="dropdown-toggle"
+                class="dropdown-toggle toggle-arrow"
                 :class="{ 'active': isDropdownOpen }"
                 @click="toggleDropdown"
             >
@@ -15,13 +15,14 @@
                 :disabled="isLoading"
                 :value="value"
                 :placeholder="placeholder"
+                step="0.01"
                 @input="onInput($event.target.valueAsNumber)"
             >
             <Loader v-show="isLoading"/>
         </div>
         <div
             class="list-dropdown"
-            :class="{ 'open': isDropdownOpen }"
+            v-show="isDropdownOpen"
             v-click-outside="onDropdownOutsideClick"
         >
             <div class="search-input-wrapper">
@@ -44,7 +45,7 @@
 </template>
 
 <script>
-import Loader from '@/components/Loader.vue';
+import Loader from '@/components/common/Loader.vue';
 
 export default {
     name: 'ConverterInput',
@@ -156,7 +157,7 @@ export default {
     align-items: center;
     border-bottom: 4px solid #8f8acd;
     width: 350px;
-    &::v-deep .spinner {
+    &:deep(.spinner) {
         flex-shrink: 0;
     }
 }
@@ -168,19 +169,6 @@ export default {
     padding: 2px 8px;
     display: flex;
     align-items: center;
-    &:after {
-        content: '';
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 6px solid white;
-        margin-left: 5px;
-        transition: all .2s ease;
-    }
-    &.active {
-        &:after {
-            transform: rotate(-180deg);
-        }
-    }
 }
 .active-currency {
     font-size: 24px;
@@ -190,7 +178,6 @@ export default {
 }
 .list-dropdown {
     z-index: 10;
-    display: none;
     position: absolute;
     background: #fff;
     width: 100%;
@@ -198,9 +185,6 @@ export default {
     left: 0;
     border-bottom-left-radius: 4px;
     border-bottom-right-radius: 4px;
-    &.open {
-        display: block;
-    }
 }
 .list {
     max-height: 300px;
