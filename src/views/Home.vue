@@ -1,7 +1,5 @@
 <template>
-    <div class="main">
-        <Converter/>
-    </div>
+    <Converter/>
 </template>
 
 <script>
