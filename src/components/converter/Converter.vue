@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="converter-title">{{ cryptoCurrency.code }} to {{ fiatCurrency.code }}</div>
+        <div class="converter-title">{{ converterTitle }}</div>
         <div class="converter-wrapper">
             <ConverterInput
                 :value="cryptoAmount"
@@ -17,7 +17,7 @@
                 @onCurrencySelect="onCurrencySelect($event)"
             />
         </div>
-        <!-- <div class="converter-disclaimer">*{{ t('converter.priceDisclaimer') }}</div> -->
+        <div class="converter-disclaimer">{{ $t('converter.priceDisclaimer') }}</div>
     </div>
 </template>
 
@@ -53,6 +53,14 @@ export default {
     beforeDestroy() {
         clearInterval(this.fetchInterval);
     },
+    computed: {
+        converterTitle() {
+            return this.$t('converter.cryptoToFiat', {
+                crypto: this.cryptoCurrency.code,
+                fiat: this.fiatCurrency.code,
+            })
+        },
+    },
     methods: {
         onFiatInput(value) {
             this.fiatPrice = value;
@@ -70,7 +78,7 @@ export default {
         },
         updateFiatPrice() {
             const price = this.cryptoAmount * (this.tickerInfo?.a[0] ?? 0);
-            this.fiatPrice = price;
+            this.fiatPrice = price.toFixed(2);
         },
         updateCryptoAmount() {
             const amount = this.fiatPrice / (this.tickerInfo?.a[0] ?? 0);
@@ -110,6 +118,11 @@ export default {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+}
+.converter-disclaimer {
+    font-size: 12px;
+    color: #adadad;
+    margin-top: 10px;
 }
 .equal-sign {
     font-size: 48px;

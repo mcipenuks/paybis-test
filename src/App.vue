@@ -8,6 +8,14 @@ import Header from '@/components/Header.vue';
 export default {
     components: {
         Header
+    },
+    mounted() {
+        this.setLocaleFromRoute();
+    },
+    methods: {
+        setLocaleFromRoute() {
+            console.warn('App', this.$route);
+        },
     }
 }
 </script>

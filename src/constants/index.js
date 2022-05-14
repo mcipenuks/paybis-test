@@ -14,3 +14,9 @@ export const FIAT_CURRENCIES = [
     { code: 'USD', name: 'United States Dollar', type: 'fiat' },
     { code: 'EUR', name: 'Euro', type: 'fiat' }
 ];
+
+export const LANGUAGES = [
+    { code: "en", name: "English" },
+    { code: "fr", name: "Français" },
+    { code: "ru", name: "Русский" },
+];
