@@ -9,16 +9,5 @@ export default {
 </script>
 
 <style lang="scss">
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-}
-body {
-    background: #201f2c;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+@import '@/assets/scss/app.scss';
 </style>
