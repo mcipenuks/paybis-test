@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Converter from '@/components/Converter.vue';
+import Converter from '@/components/converter/Converter.vue';
 
 export default {
     components: {
