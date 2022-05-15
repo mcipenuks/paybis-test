@@ -18,7 +18,6 @@ router.beforeEach((to, from, next) => {
     if (lang) {
         i18n.global.locale = lang;
     }
-    console.log('set locale')
 
     next();
 });
