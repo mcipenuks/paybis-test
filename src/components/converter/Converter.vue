@@ -25,7 +25,6 @@
 
 <script>
 import ConverterInput from '@/components/converter/ConverterInput.vue';
-// TODO: format input currency
 import { currencyFormatter } from '@/helpers';
 import { fetchTickerPair } from '@/api';
 import { TICKER_RATE, INPUT_TYPE_FIAT, INPUT_TYPE_CRYPTO, CRYPTO_CURRENCIES, FIAT_CURRENCIES } from '@/constants';
