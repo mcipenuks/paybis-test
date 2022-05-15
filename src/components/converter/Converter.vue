@@ -122,6 +122,9 @@ export default {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    @media screen and (max-width: 900px) {
+        flex-direction: column;
+    }
 }
 .converter-disclaimer {
     font-size: 12px;
